@@ -1,4 +1,5 @@
 // Styles
+import NextAuthSessionProvider from "@/providers/NextAuthSessionProvider";
 import "../styles/globals.css";
 
 // Components
@@ -17,7 +18,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ClientProvider>{children}</ClientProvider>
+        <ClientProvider>
+          <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
+          {/* {children} */}
+        </ClientProvider>
       </body>
     </html>
   );
