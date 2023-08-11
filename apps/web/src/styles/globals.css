@@ -1,3 +1,56 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: "Proto";
+  src: url("/font/ProtoMono-Medium.woff");
+}
+
+.noScrollbar::-webkit-scrollbar {
+  width: 0px;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+::-webkit-scrollbar-track {
+  background: #23262f;
+  box-shadow: inset 0 0 5px gray;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: black;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #121214;
+  border: 3px solid #23262f;
+  border-radius: 12px;
+}
+
+/* #maze path {
+  fill: blue;
+  animation-name: animate-maze;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+} */
+
+@keyframes animate-maze {
+  0% {
+    fill: blue;
+  }
+  25% {
+    fill: red;
+  }
+  50% {
+    fill: yellow;
+  }
+  75% {
+    fill: orange;
+  }
+  100% {
+    fill: blue;
+  }
+}
