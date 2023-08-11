@@ -5,6 +5,8 @@ import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
+import { signIn, signOut, useSession } from "next-auth/react";
+
 // Assets
 import { Moon, Sun } from "@/assets/icons";
 
@@ -14,6 +16,8 @@ import { toast } from "react-hot-toast";
 type NavbarProps = {};
 
 const Navbar: React.FC<NavbarProps> = () => {
+  const { data: session } = useSession();
+
   const { push } = useRouter();
 
   const { resolvedTheme: currentTheme, setTheme } = useTheme();
@@ -67,6 +71,15 @@ const Navbar: React.FC<NavbarProps> = () => {
       <div className="flex items-center gap-4">
         <ConnectButton />
 
+        {session && (
+          <button
+            className="bg-zinc-800 py-2 px-4 rounded-lg"
+            onClick={() => signOut()}
+          >
+            Sign Out Of Worldcoin
+          </button>
+        )}
+
         <div
           role="presentation"
           onClick={handleTheme}
@@ -75,7 +88,7 @@ const Navbar: React.FC<NavbarProps> = () => {
           {currentTheme === "dark" ? Sun : Moon}
         </div>
       </div>
-    </header> 
+    </header>
   );
 };
 export default React.memo(Navbar);

@@ -23,6 +23,7 @@ import { cn } from "@/utils/helpers";
 // Components
 import Navbar from "../common/Navbar";
 import { publicClient } from "@/client/client";
+import GlassGate from "../common/GlassGate/GlassGate";
 
 type ClientProviderProps = {
   children: any;
@@ -82,6 +83,7 @@ const ClientProvider: React.FC<ClientProviderProps> = ({ children }) => {
             <Navbar />
             {children}
           </main>
+          <GlassGate />
           <Toaster
             containerStyle={{
               bottom: "70px",
