@@ -1,12 +1,28 @@
+"use client";
 import Cars from "@/components/Cars/Cars";
 import MazeGrid from "@/components/Pacman/MazeGrid";
 import { cn } from "@/utils/helpers";
-import React from "react";
+import { endGame, getUsers, startGame } from "op";
+import React, { useEffect, useState } from "react";
 const games = {
   pacman: <MazeGrid />,
   cars: <Cars />,
 } as const;
+
+type TGameState = "idle" | "ongoing";
+
 const PageId = ({ params }: { params: { id: keyof typeof games } }) => {
+  const [users, setUsers] = useState<Awaited<ReturnType<typeof getUsers>>>([]);
+  const [gameState, setGameState] = useState<TGameState>("idle");
+  useEffect(() => {
+    (async () => {
+      const _users = await getUsers();
+      console.log({ _users });
+
+      setUsers(_users);
+    })();
+  }, [gameState]);
+
   return (
     <section className="dark:text-text text-black px-10 py-6 flex items-center w-full flex-col">
       <h1 className="text-heading text-5xl font-bold mb-10">{params.id}</h1>
@@ -17,89 +33,75 @@ const PageId = ({ params }: { params: { id: keyof typeof games } }) => {
         </div>
 
         <div className="w-[50%] h-full rounded-lg p-2">
-          <AboutGameStrip
-            AboutGameStripData={[
-              { title: "Price", desc: "5eth" },
-              { title: "Last Bid", desc: "10eth" },
-              { title: "Top Bid", desc: "10eth" },
-              { title: "Rarity", desc: "rare" },
-              { title: "Owner", desc: "harsh.eth" },
-              { title: "id", desc: "111" },
-            ]}
-          />
-
+          <div>
+            <h1 className="text-heading text-xl font-semibold mb-1">
+              Game State
+            </h1>
+            <div>{gameState.toUpperCase()}</div>
+          </div>
           <div className="mt-10">
-            <h3 className="text-heading text-xl font-semibold mb-1">Traits</h3>
-            <div className="grid grid-cols-2 gap-5 place-items-center w-full">
-              <AboutGameStrip
-                AboutGameStripData={[
-                  { title: "Background", desc: "Brown" },
-                  { title: "Rarity", desc: "111.35%" },
-                ]}
-              />
-              <AboutGameStrip
-                AboutGameStripData={[
-                  { title: "Clothes", desc: "Brown" },
-                  { title: "Rarity", desc: "111.35%" },
-                ]}
-              />
-              <AboutGameStrip
-                AboutGameStripData={[
-                  { title: "Eyes", desc: "Brown" },
-                  { title: "Rarity", desc: "111.35%" },
-                ]}
-              />
-
-              <AboutGameStrip
-                AboutGameStripData={[
-                  { title: "Specialty", desc: "Brown" },
-                  { title: "Rarity", desc: "111.35%" },
-                ]}
-              />
-              <AboutGameStrip
-                AboutGameStripData={[
-                  { title: "Version", desc: "Brown" },
-                  { title: "Rarity", desc: "111.35%" },
-                ]}
-              />
+            <h1 className="text-heading text-xl font-semibold mb-1">Actions</h1>
+            <div className="flex gap-2">
+              <button
+                disabled={gameState === "ongoing"}
+                className={cn(
+                  "bg-zinc-800 py-2 px-4 rounded-lg",
+                  gameState === "ongoing" && "opacity-50"
+                )}
+                onClick={async () => {
+                  try {
+                    await startGame();
+                    setGameState("ongoing");
+                  } catch (error) {
+                    console.error(error);
+                  }
+                }}
+              >
+                Start Game
+              </button>
+              <button
+                disabled={gameState === "idle"}
+                className={cn(
+                  "bg-zinc-800 py-2 px-4 rounded-lg",
+                  gameState === "idle" && "opacity-50"
+                )}
+                onClick={async () => {
+                  try {
+                    await endGame();
+                    setGameState("idle");
+                  } catch (error) {
+                    console.error(error);
+                  }
+                }}
+              >
+                End Game
+              </button>
+              <button
+                className="bg-zinc-800 py-2 px-4 rounded-lg"
+                onClick={() => getUsers()}
+              >
+                Get Users
+              </button>
             </div>
           </div>
 
           <div className="mt-10">
             <h1 className="text-heading text-xl font-semibold mb-1">
-              Activities
+              Leaderboard
             </h1>
-            <AboutGameStrip
-              AboutGameStripData={[
-                { title: "Price", desc: "5eth" },
-                { title: "Last Bid", desc: "10eth" },
-                { title: "Top Bid", desc: "10eth" },
-                { title: "Rarity", desc: "rare" },
-                { title: "Owner", desc: "harsh.eth" },
-                { title: "id", desc: "111" },
-              ]}
-            />
-            <AboutGameStrip
-              AboutGameStripData={[
-                { title: "Price", desc: "5eth" },
-                { title: "Last Bid", desc: "10eth" },
-                { title: "Top Bid", desc: "10eth" },
-                { title: "Rarity", desc: "rare" },
-                { title: "Owner", desc: "harsh.eth" },
-                { title: "id", desc: "111" },
-              ]}
-              className="my-4"
-            />
-            <AboutGameStrip
-              AboutGameStripData={[
-                { title: "Price", desc: "5eth" },
-                { title: "Last Bid", desc: "10eth" },
-                { title: "Top Bid", desc: "10eth" },
-                { title: "Rarity", desc: "rare" },
-                { title: "Owner", desc: "harsh.eth" },
-                { title: "id", desc: "111" },
-              ]}
-            />
+
+            {[...users]
+              .sort((a, b) => (a.xp < b.xp ? 1 : -1))
+              .filter(({ isOwner, xp }) => !isOwner && xp)
+              .map(({ userAddress, xp }, i) => (
+                <AboutGameStrip
+                  AboutGameStripData={[
+                    { title: "Rank", desc: `#${i + 1}` },
+                    { title: "address", desc: userAddress },
+                    { title: "XP", desc: xp.toString() },
+                  ]}
+                />
+              ))}
           </div>
         </div>
       </div>

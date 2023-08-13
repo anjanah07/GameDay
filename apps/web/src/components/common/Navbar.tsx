@@ -12,6 +12,7 @@ import { Moon, Sun } from "@/assets/icons";
 
 // Components
 import { toast } from "react-hot-toast";
+import { getUsers, startGame, endGame } from "op";
 
 type NavbarProps = {};
 
@@ -51,7 +52,7 @@ const Navbar: React.FC<NavbarProps> = () => {
           role="presentation"
           onClick={() => push("/")}
         >
-          Your Logo
+          GAME DAY
         </h1>
 
         <div>

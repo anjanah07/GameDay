@@ -91,7 +91,7 @@ const Player = (props: PLayerProps) => {
 
       setLeftPercent((prev) => (player.x * 100) / 28);
       //   setTopPercent((prev) => (player.y * 100) / 31);
-      setPlayer((prev) => ({ ...prev, x: prev.x + 1 }));
+      // setPlayer((prev) => ({ ...prev, x: prev.x + 1 }));
     }, 1000);
 
     return () => clearInterval(interval);

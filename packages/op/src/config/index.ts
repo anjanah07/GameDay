@@ -1,9 +1,8 @@
 import { createPublicClient, custom, http } from "viem";
-import { createWalletClient } from "viem";
-import { zoraTestnet } from "viem/chains";
-import { privateKeyToAccount } from "viem/accounts";
+import { localhost } from "viem/chains";
 
 export const publicClient = createPublicClient({
-  chain: zoraTestnet,
-  transport: http("https://testnet.rpc.zora.energy"),
+  chain: { ...localhost, id: 31337 },
+  // transport: http("https://testnet.rpc.zora.energy"),
+  transport: http(),
 });

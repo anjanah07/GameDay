@@ -14,7 +14,15 @@ import {
 } from "@rainbow-me/rainbowkit";
 
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { mainnet, goerli, sepolia } from "wagmi/chains";
+import {
+  mainnet,
+  goerli,
+  sepolia,
+  localhost,
+  zoraTestnet,
+  baseGoerli,
+  optimismGoerli,
+} from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 
 // Utils
@@ -33,8 +41,11 @@ const { chains } = configureChains(
   [
     mainnet,
     ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true"
-      ? [goerli, sepolia]
+      ? [{ ...localhost, id: 31337 }]
       : []),
+    zoraTestnet,
+    baseGoerli,
+    optimismGoerli,
   ],
   [publicProvider()]
 );
@@ -83,7 +94,7 @@ const ClientProvider: React.FC<ClientProviderProps> = ({ children }) => {
             <Navbar />
             {children}
           </main>
-          <GlassGate />
+          {/* <GlassGate /> */}
           <Toaster
             containerStyle={{
               bottom: "70px",
