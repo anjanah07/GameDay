@@ -1,23 +1,24 @@
 import { cn } from "@/utils/helpers";
-import { getUsers } from "op";
+import { TChainClient, getUsers } from "op";
 import React, { useEffect, useState } from "react";
-import { useAccount, useEnsName } from "wagmi";
+import { useAccount, useEnsName, useNetwork } from "wagmi";
 
 type TableProps = {};
 
 const Table: React.FC<TableProps> = () => {
   const TableHeading = ["Rank #", "ENS", "Address", "XP"];
-  const { address, isConnecting, isDisconnected } = useAccount();
+  const { address } = useAccount();
+  const { chain } = useNetwork();
 
   const [users, setUsers] = useState<Awaited<ReturnType<typeof getUsers>>>([]);
   useEffect(() => {
     (async () => {
-      const _users = await getUsers();
+      const _users = await getUsers(chain?.network as TChainClient);
       console.log({ _users });
 
       setUsers(_users);
     })();
-  }, []);
+  }, [chain]);
 
   return (
     <div className="mt-4 mx-auto  text-center">

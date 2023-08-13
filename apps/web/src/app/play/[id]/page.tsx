@@ -2,8 +2,9 @@
 import Cars from "@/components/Cars/Cars";
 import MazeGrid from "@/components/Pacman/MazeGrid";
 import { cn } from "@/utils/helpers";
-import { endGame, getUsers, startGame } from "op";
+import { TChainClient, endGame, getUsers, startGame } from "op";
 import React, { useEffect, useState } from "react";
+import { useNetwork } from "wagmi";
 const games = {
   pacman: <MazeGrid />,
   cars: <Cars />,
@@ -12,16 +13,22 @@ const games = {
 type TGameState = "idle" | "ongoing";
 
 const PageId = ({ params }: { params: { id: keyof typeof games } }) => {
+  const { chain } = useNetwork();
+
   const [users, setUsers] = useState<Awaited<ReturnType<typeof getUsers>>>([]);
   const [gameState, setGameState] = useState<TGameState>("idle");
   useEffect(() => {
     (async () => {
-      const _users = await getUsers();
+      const _users = await getUsers(chain?.network as TChainClient);
       console.log({ _users });
 
       setUsers(_users);
     })();
   }, [gameState]);
+
+  useEffect(() => {
+    console.log({ chain });
+  }, [chain]);
 
   return (
     <section className="dark:text-text text-black px-10 py-6 flex items-center w-full flex-col">
@@ -38,6 +45,10 @@ const PageId = ({ params }: { params: { id: keyof typeof games } }) => {
               Game State
             </h1>
             <div>{gameState.toUpperCase()}</div>
+            <h1 className="text-heading text-xl font-semibold mb-1 mt-10">
+              Chain
+            </h1>
+            <div>{chain?.name}</div>
           </div>
           <div className="mt-10">
             <h1 className="text-heading text-xl font-semibold mb-1">Actions</h1>
@@ -50,7 +61,7 @@ const PageId = ({ params }: { params: { id: keyof typeof games } }) => {
                 )}
                 onClick={async () => {
                   try {
-                    await startGame();
+                    await startGame(chain?.network as TChainClient);
                     setGameState("ongoing");
                   } catch (error) {
                     console.error(error);
@@ -67,7 +78,7 @@ const PageId = ({ params }: { params: { id: keyof typeof games } }) => {
                 )}
                 onClick={async () => {
                   try {
-                    await endGame();
+                    await endGame(chain?.network as TChainClient);
                     setGameState("idle");
                   } catch (error) {
                     console.error(error);
@@ -78,7 +89,7 @@ const PageId = ({ params }: { params: { id: keyof typeof games } }) => {
               </button>
               <button
                 className="bg-zinc-800 py-2 px-4 rounded-lg"
-                onClick={() => getUsers()}
+                onClick={() => getUsers(chain?.network as TChainClient)}
               >
                 Get Users
               </button>
