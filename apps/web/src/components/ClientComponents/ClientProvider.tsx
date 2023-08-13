@@ -94,7 +94,7 @@ const ClientProvider: React.FC<ClientProviderProps> = ({ children }) => {
             <Navbar />
             {children}
           </main>
-          {/* <GlassGate /> */}
+          {!process.env.NEXT_PUBLIC_IS_LOCAL && <GlassGate />}
           <Toaster
             containerStyle={{
               bottom: "70px",
